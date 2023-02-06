@@ -67,13 +67,13 @@ function distance(x1, y1, x2, y2) {
 function getVCollision(angle) {
     const right = Math.abs(Math.floor((angle - Math.PI / 2) / Math.PI) % 2);
 
-    const firstX = right ? Math.floor(player.x / CELL_SIZE) * CELL_SIZE + CELL_SIZE : Math.floor(player.x / CELL_SIZE) * CELL_SIZE;
+    const firstX = right
+        ? Math.floor(player.x / CELL_SIZE) * CELL_SIZE + CELL_SIZE
+        : Math.floor(player.x / CELL_SIZE) * CELL_SIZE;
 
     const firstY = player.y + (firstX - player.x) * Math.tan(angle);
 
-    const xA = right
-        ? CELL_SIZE
-        : -CELL_SIZE;
+    const xA = right ? CELL_SIZE : -CELL_SIZE;
     const yA = xA * Math.tan(angle);
 
     let wall;
@@ -88,19 +88,18 @@ function getVCollision(angle) {
         if (outOfMapBounds(cellX, cellY)) {
             break;
         }
-
         wall = map[cellY][cellX];
         if (!wall) {
             nextX += xA;
             nextY += yA;
+        } else {
         }
     }
-
     return {
         angle,
         distance: distance(player.x, player.y, nextX, nextY),
-        vertical: true
-    }
+        vertical: true,
+    };
 }
 
 function getHCollision(angle) {
@@ -117,10 +116,10 @@ function getHCollision(angle) {
     let nextX = firstX;
     let nextY = firstY;
     while (!wall) {
-        const cellY = up
-            ? Math.floor(nextY / CELL_SIZE)
-            : Math.floor(nextY / CELL_SIZE) - 1;
         const cellX = Math.floor(nextX / CELL_SIZE);
+        const cellY = up
+            ? Math.floor(nextY / CELL_SIZE) - 1
+            : Math.floor(nextY / CELL_SIZE);
 
         if (outOfMapBounds(cellX, cellY)) {
             break;
@@ -132,12 +131,11 @@ function getHCollision(angle) {
             nextY += yA;
         }
     }
-
     return {
         angle,
         distance: distance(player.x, player.y, nextX, nextY),
-        vertical: false
-    }
+        vertical: false,
+    };
 }
 
 function castRay(angle) {
@@ -161,12 +159,11 @@ function getRays() {
 function fixFishEye(distance, angle, playerAngle) {
     const diff = angle - playerAngle;
     return distance * Math.cos(diff);
-
 }
 
 function renderScene(rays) {
     rays.forEach((ray, i) => {
-        const distance = ray.distance;
+        const distance = fixFishEye(ray.distance, ray.angle, player.angle);
         const wallHeight = (CELL_SIZE * 5) / distance * 277;
 
         context.fillStyle = ray.vertical
@@ -270,21 +267,27 @@ function toRadians(deg) {
 }
 
 document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowUp') {
+    if (e.key === 'w') {
         player.speed = 2;
     }
 
-    if (e.key === 'ArrowDown') {
+    if (e.key === 's') {
         player.speed = -2;
     }
+
+    if (e.key === 'ArrowLeft') {
+        player.angle -= toRadians(10);
+    }
+
+    if (e.key === 'ArrowRight') {
+        player.angle += toRadians(10);
+    }
+
+
 });
 
 document.addEventListener('keyup', (e) => {
-    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+    if (e.key === 'w' || e.key === 's') {
         player.speed = 0;
     }
-});
-
-document.addEventListener('mousemove', (e) => {
-    player.angle += toRadians(e.movementX);
 });

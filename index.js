@@ -275,14 +275,20 @@ document.addEventListener('keydown', (e) => {
     if (e.key === 's') {
         player.speed = -2;
     }
+
+    if (e.key === 'ArrowLeft') {
+        player.angle -= toRadians(10);
+    }
+
+    if (e.key === 'ArrowRight') {
+        player.angle += toRadians(10);
+    }
+
+
 });
 
 document.addEventListener('keyup', (e) => {
     if (e.key === 'w' || e.key === 's') {
         player.speed = 0;
     }
-});
-
-document.addEventListener('mousemove', (e) => {
-    player.angle += toRadians(e.movementX);
 });

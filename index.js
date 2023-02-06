@@ -159,12 +159,11 @@ function getRays() {
 function fixFishEye(distance, angle, playerAngle) {
     const diff = angle - playerAngle;
     return distance * Math.cos(diff);
-
 }
 
 function renderScene(rays) {
     rays.forEach((ray, i) => {
-        const distance = ray.distance;
+        const distance = fixFishEye(ray.distance, ray.angle, player.angle);
         const wallHeight = (CELL_SIZE * 5) / distance * 277;
 
         context.fillStyle = ray.vertical
